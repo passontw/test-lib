@@ -1,0 +1,36 @@
+一、构建设置
+删除过期构建记录  true
+1.构建保留期限    7天
+2.构建记录最大数量  10
+
+二、构建参数
+1.GIT_BRANCH feature/2024-12-06/framework_v2
+描述 代码打包分支
+
+2.NODE_PORT 30229
+描述 端口号
+
+3.POD_REPLICAS 1
+描述 pod启动副本数
+
+4.APP_NAME baccarat-server-backend
+描述 应用名
+
+5.NAMESPACE g32-dev
+描述 k8s 项目的空间名
+
+6.DESCRIPTION  g32-dev开发环境
+描述 harbor 地址
+
+7.REGISTRY 10.146.40.240:30002
+描述 harbor 地址
+
+8.PROJECT g32-dev
+描述 harbor中项目名
+
+9.GIT_URL http://gitlabdev.solidleisure.com:5999/g32-group/g32-fastbac-game-server.git
+描述 项目git仓库地址
+
+10.METRICS_PORT 30230
+描述
+

@@ -1,0 +1,64 @@
+pipeline {
+  agent {
+    kubernetes {
+      inheritFrom 'go base'
+      containerTemplate {
+        name 'go'
+        image 'golang:1.22'
+      }
+
+    }
+
+  }
+  stages {
+    stage('拉取源代码') {
+      agent none
+      steps {
+        sh 'git config --global http.sslVerify false'
+        checkout([$class: 'GitSCM', branches: [[name: '$GIT_BRANCH']], doGenerateSubmoduleConfigurations: false, extensions: [[
+                                                                                                                                                                                                                                                                                                      $class: 'SubmoduleOption',
+                                                                                                                                                                                                                                                                                                      disableSubmodules: false,
+                                                                                                                                                                                                                                                                                                      parentCredentials: true,
+                                                                                                                                                                                                                                                                                                      recursiveSubmodules: true,
+                                                                                                                                                                                                                                                                                                      reference: '',
+                                                                                                                                                                                                                                                                                                      trackingSubmodules: false
+                                                                                                                                                                                                                                                                                            ]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'git-id', url: '$GIT_URL']]])
+        }
+      }
+
+      stage('编译') {
+        agent none
+        steps {
+          container('go') {
+            sh '''ls -alh *
+go mod tidy
+go build -buildvcs=false
+ls -alh *'''
+          }
+
+        }
+      }
+
+      stage('构建并推送镜像') {
+        agent none
+        steps {
+          script {
+            env.TIMESTAMP = sh(returnStdout: true, script: 'date +%Y%m%d%H%M%S').trim()
+            env.DOCKER_TAG = "${TIMESTAMP}-${BUILD_NUMBER}"
+          }
+
+          container('base') {
+            sh 'podman build -f ./Dockerfile -t $REGISTRY/$PROJECT/$APP_NAME:$DOCKER_TAG .'
+            withCredentials([usernamePassword(credentialsId : 'harbor-id' ,passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,)]) {
+              //sh 'podman logout $REGISTRY'
+              sh 'echo "$DOCKER_PASSWORD" | podman login $REGISTRY -u "$DOCKER_USERNAME" --password-stdin'
+              sh 'podman push $REGISTRY/$PROJECT/$APP_NAME:$DOCKER_TAG'
+            }
+
+          }
+
+        }
+      }
+
+    }
+  }

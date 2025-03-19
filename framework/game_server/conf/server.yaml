@@ -1,0 +1,97 @@
+#redis 集群信息
+redis:
+  host: ${REDIS_HOST:10.146.40.240}     #Host
+  port: ${REDIS_PORT:30012}            #端口号
+  userName: ${REDIS_USERNAME}    #redis用户名
+  password: ${REDIS_PASSWORD:123456}    #redis密码
+  defaultDb: ${REDIS_DATABASE:0}   #redis使用到的库
+  keyPrefix: g32-baccarat-game-server #服务redis key统一前缀
+  mode: single #redis工作模式 single:单节点模式 cluster:集群模式
+
+#数据库配置信息 目前使用到了uid db以及game order
+database:
+  uid:
+    host: ${UID_HOST:10.146.40.240:30010}           #数据库host
+    database: ${UID_DATABASE:g32_uid_dev}           #数据库库名
+    aliasName: default                              #beego orm要求必须有一个名字为default的别名
+    username: ${UID_USERNAME:root}                  #数据库用户名
+    password: ${UID_PASSWORD:123456}                #数据库密码
+  gameDb:
+    host: ${TIDB_HOST:10.146.40.240:30010}                      #数据库host
+    database: ${TIDB_DATABASE:g32_dragon_tiger_game_dev}            #数据库库名
+    aliasName: gamedb                                           #beego orm要求必须有一个名字为default的别名
+    username: ${TIDB_USERNAME:root}                             #数据库用户名
+    password: ${TIDB_PASSWORD:123456}                           #数据库密码
+
+#能力中心相关的配置信息
+platform:
+  host: http://game-server-nginx      #host地址
+  port: 80                            #为0时候默认为80端口
+  retryTime: 5                        #请求失败重试次数
+  retryInterval: 100                  #请求失败重试间隔,单位ms
+
+#公共的配置
+common:
+  heartbeatInterval: 5        #发送心跳间隔
+  heartbeatExpired: 6         #redis心跳超时时间
+  loopTaskExpired: 10         #内存中任务检测超时时间,防止任务重复启动
+  userLimitSwitch: on         #个人限红开关 on 开启个人限红校验 off 关闭个人限红校验
+  logLevel: Debug     #日志级别 取值为：Emergency Alert Critical Error Warning Notice Informational Debug
+  gameId: 2                   #游戏Id 1:急速百家乐 2:龙虎 6:经典电子百家乐
+
+#rocket配置信息
+# mq群组 命名规则[微服务名]-[topic]-group
+# 百家乐服务器名字baccarat-game-server
+rocket:
+  nameServer: ${MQ_NAMESERVER}                            #rocketmq broker 地址 http://rocketmq-nameserver-dev.mq:9876 10.146.40.240:30021
+  producerQueueMaxLen: 500                                #mq生产者发送队列最大长度500,队列满是后续消息则忽略
+  gameDrawTopic: baccarat-game-server-game-draw-group     #开奖事件组
+  retries: 2                                              #消息处理失败后重试次数
+  #消费者
+  topicsIn:
+    - topicName: "game-draw-0"
+      topicGroup: "baccarat-game-server-game-draw-0-group"
+    - topicName: "game-draw-1"
+      topicGroup: "baccarat-game-server-game-draw-1-group"
+    - topicName: "game-draw-2"
+      topicGroup: "baccarat-game-server-game-draw-2-group"
+    - topicName: "game-draw-3"
+      topicGroup: "baccarat-game-server-game-draw-3-group"
+    - topicName: "game-draw-4"
+      topicGroup: "baccarat-game-server-game-draw-4-group"
+    - topicName: "game-draw-5"
+      topicGroup: "baccarat-game-server-game-draw-5-group"
+    - topicName: "game-draw-6"
+      topicGroup: "baccarat-game-server-game-draw-6-group"
+    - topicName: "game-draw-7"
+      topicGroup: "baccarat-game-server-game-draw-7-group"
+    - topicName: "game-draw-8"
+      topicGroup: "baccarat-game-server-game-draw-8-group"
+    - topicName: "game-draw-9"
+      topicGroup: "baccarat-game-server-game-draw-9-group"
+  #生产者
+  topicsOut:
+    - topicName: "game-draw-0"
+      topicGroup: ""
+    - topicName: "game-draw-1"
+      topicGroup: ""
+    - topicName: "game-draw-2"
+      topicGroup: ""
+    - topicName: "game-draw-3"
+      topicGroup: ""
+    - topicName: "game-draw-4"
+      topicGroup: ""
+    - topicName: "game-draw-5"
+      topicGroup: ""
+    - topicName: "game-draw-6"
+      topicGroup: ""
+    - topicName: "game-draw-7"
+      topicGroup: ""
+    - topicName: "game-draw-8"
+      topicGroup: ""
+    - topicName: "game-draw-9"
+      topicGroup: ""
+#http相关的配置信息
+http:
+  httpConnectTimeout: 5       #http连接超时时间单位秒
+  httpReadWriteTimeout: 5     #http读超时时间单位秒

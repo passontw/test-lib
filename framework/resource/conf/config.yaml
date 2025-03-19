@@ -1,0 +1,41 @@
+dealer:
+  host: "0.0.0.0"
+  port: 8080
+  stableMode: ${STABLE_MODE} # 稳定模式 prod dev（非法包不断连）
+  maxShoe: 200
+
+database:
+  host: ${TIDB_HOST}
+  user: ${TIDB_USERNAME}
+  password: ${TIDB_PASSWORD}
+  dbname: ${TIDB_DATABASE} # 数据库名称 g32_game_dss
+
+web:
+  port: 8088 # http对外服务端口
+
+redis:
+  mode: single # single 单节点 cluster 集群
+  host: ${REDIS_HOST} # 10.146.40.80
+  port: ${REDIS_PORT} # 7001-7006 如果是单节点模式 则自动选择第一个节点7001
+  db: ${REDIS_DATABASE} # 单节点模式生效 选择的库 开发0 测试15
+  pwd: ${REDIS_PASSWORD}
+
+beego:
+  appName: "roulette-resource" # 应用程序的名称。建议设置，因为我们使用它进行一些日志记录和追踪。
+  logMode: ${LOG_MODE} # beego框架配置 默认dev 与环境相同，通常为 dev、prod
+  enablePprof: true # 是否开启 Pprof 性能监控
+
+nacos:
+  host: ${REGISTER_HOST}
+  namespaceId: ${NAMESPACE}
+  dataId: ${DATAID}
+
+subscription:
+  - host: "127.0.0.1" # 订阅的数据源ip
+    port: 9202 # 订阅的数据源端口
+    id: 3003 # 与订阅的数据源约定的账号（命名延续G01）
+    pwd: 3003 # 与订阅的数据源约定的密码
+#  - host: "127.0.0.2" # 订阅的数据源ip
+#    port: 9202 # 订阅的数据源端口
+#    id: 3003 # 与订阅的数据源约定的账号（命名延续G01）
+#    pwd: 3003 # 与订阅的数据源约定的密码
